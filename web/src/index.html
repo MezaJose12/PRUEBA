@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitar envio - Mensajeria urbana</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<main>
+<h1>Solicitar un envio</h1>
+<p class="sub">Complete los datos (ficticios). Al enviar recibira un codigo para seguir el paquete.</p>
+<section>
+  <form id="f" class="rejilla" autocomplete="off">
+    <label class="campo">Remitente<input name="remitente" required minlength="2" maxlength="100"></label>
+    <label class="campo">Destinatario<input name="destinatario" required minlength="2" maxlength="100"></label>
+    <label class="campo">Direccion de origen<input name="origen" required minlength="2" maxlength="200"></label>
+    <label class="campo">Direccion de destino<input name="destino" required minlength="2" maxlength="200"></label>
+    <label class="campo">Tipo de servicio
+      <select name="tipo_servicio" id="tipo" required></select></label>
+    <label class="campo">Zona<select name="zona_id" id="zona" required></select></label>
+    <div class="fila"><button type="submit" id="enviar">Registrar envio</button></div>
+  </form>
+  <div id="comprobante"></div>
+</section>
+</main>
+<script src="js/app.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

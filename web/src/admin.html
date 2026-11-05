@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administracion - Mensajeria urbana</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<main>
+<h1>Administracion</h1>
+<p class="sub">Zonas y repartidores. Requiere el rol administrador (selector en la barra superior).</p>
+<section><h2>Zonas</h2>
+  <form id="fz" class="fila" style="margin-bottom:12px"><label class="campo">Nueva zona<input name="nombre" required minlength="2"></label>
+  <button type="submit">Crear zona</button></form><div id="zonas" class="tabla-wrap"></div></section>
+<section><h2>Tipos de servicio</h2>
+  <form id="ft" class="fila" style="margin-bottom:12px"><label class="campo">Nuevo tipo<input name="nombre" required minlength="2" maxlength="40"></label>
+  <button type="submit">Crear tipo</button></form><div id="tipos" class="tabla-wrap"></div></section>
+<section><h2>Repartidores</h2>
+  <form id="fr" class="fila" style="margin-bottom:12px"><label class="campo">Nombre<input name="nombre" required minlength="2"></label>
+  <label class="campo">Capacidad maxima<input name="capacidad_max" type="number" min="1" max="50" value="3" required></label>
+  <button type="submit">Crear repartidor</button></form><div id="reps" class="tabla-wrap"></div></section>
+</main>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

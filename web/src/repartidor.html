@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repartidor - Mensajeria urbana</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<main>
+<h1>Vista de repartidor</h1>
+<p class="sub">Sus tareas asignadas y los cambios de estado permitidos para cada una.</p>
+<section class="fila"><label class="campo">Repartidor<select id="rep"></select></label>
+  <button id="pos" class="sec">Enviar posicion simulada</button><span id="posinfo" class="pista"></span></section>
+<section><h2>Mis tareas</h2><div id="tareas" class="tabla-wrap"></div></section>
+<section id="form-entrega" hidden><h2>Confirmar entrega <span class="mono" id="cod-entrega"></span></h2>
+  <form id="fe" class="rejilla">
+    <label class="campo">Nombre del receptor<input name="receptor" required minlength="2"></label>
+    <label class="campo">Observacion<input name="observacion" maxlength="500"></label>
+    <label class="campo">URL de foto (simulada)<input name="foto_url" placeholder="https://ejemplo.test/foto.jpg" maxlength="300"></label>
+    <div class="fila"><button type="submit">Registrar entrega</button><button type="button" class="sec" id="cancelar-entrega">Cancelar</button></div>
+  </form></section>
+</main>
+<script src="js/app.js"></script>
+<script src="js/repartidor.js"></script>
+</body>
+</html>

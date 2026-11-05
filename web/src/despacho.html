@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Despacho - Mensajeria urbana</title>
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<main>
+<h1>Panel de despacho</h1>
+<p class="sub">Asigne repartidores a los envios pendientes. La capacidad se valida en el servidor.</p>
+<section><h2>Repartidores</h2><div id="repartidores" class="tabla-wrap"></div></section>
+<section><h2>Envios (fuente oficial: PostgreSQL)</h2>
+  <div class="fila" style="margin-bottom:12px">
+    <label class="campo">Estado<select id="f-estado"><option value="">Todos</option>
+      <option>creado</option><option>asignado</option><option>retirado</option><option>en_transito</option>
+      <option>incidencia</option><option>entregado</option><option>cancelado</option><option>devuelto</option></select></label>
+    <label class="campo">Zona<select id="f-zona"></select></label>
+    <button id="recargar" class="sec">Actualizar</button></div>
+  <div id="envios" class="tabla-wrap"></div></section>
+<section><h2>Incidencias abiertas</h2>
+  <p class="pista">El repartidor reporto un problema. Resuelvalo: reanudar la entrega o devolver al remitente.</p>
+  <div id="incidencias" class="tabla-wrap"></div></section>
+<section><h2>Busqueda rapida (indice en MongoDB)</h2>
+  <form id="fb" class="fila">
+    <label class="campo">Codigo<input name="codigo" class="mono"></label>
+    <label class="campo">Destinatario<input name="destinatario"></label>
+    <label class="campo">Estado<input name="estado" placeholder="en_transito"></label>
+    <label class="campo">Desde<input name="desde" type="date"></label>
+    <label class="campo">Hasta<input name="hasta" type="date"></label>
+    <button type="submit">Buscar</button></form>
+  <p class="pista" id="sync"></p>
+  <div id="busqueda" class="tabla-wrap"></div></section>
+</main>
+<script src="js/app.js"></script>
+<script src="js/despacho.js"></script>
+</body>
+</html>

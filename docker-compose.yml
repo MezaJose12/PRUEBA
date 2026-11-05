@@ -1,0 +1,103 @@
+# =============================================================================
+# docker-compose.yml  -  Mensajeria urbana (persistencia poliglota)
+#
+# Servicios:
+#   postgres : fuente oficial de envios, asignaciones, eventos y outbox (ACID)
+#   mongo    : evidencias de entrega + vista de busqueda (proyeccion)
+#   redis    : estado temporal con expiracion (TTL)
+#   api      : API REST (FastAPI)
+#   worker   : lee la tabla outbox de Postgres y actualiza Mongo
+#   web      : frontend estatico (nginx) que llama a la API por /api/
+#
+# Solo la API (8000) y la web (8080) publican puertos al equipo. Las bases de datos NO
+# publican puertos: solo se ven entre contenedores por la red interna.
+# =============================================================================
+
+services:
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data                                  # datos persistentes
+      - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro    # se ejecuta solo la 1a vez
+    networks: [red_interna]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: mensajeria
+    volumes:
+      - mongo_data:/data/db
+      - ./db/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks: [red_interna]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    # Contrasena obligatoria. Sin "appendonly": los datos de Redis son efimeros
+    # a proposito (posicion de repartidores). Si reinicia, se pierden: es lo esperado.
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    networks: [red_interna]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./api
+    env_file: .env
+    environment:
+      PG_HOST: postgres
+      MONGO_HOST: mongo
+      REDIS_HOST: redis
+    ports:
+      - "8000:8000"          # unico puerto expuesto: http://localhost:8000/docs
+    depends_on:
+      postgres: { condition: service_healthy }
+      mongo:    { condition: service_healthy }
+      redis:    { condition: service_healthy }
+    networks: [red_interna]
+
+  worker:
+    build: ./api             # misma imagen que la API (comparten codigo)
+    command: ["python", "-m", "app.worker"]
+    env_file: .env
+    environment:
+      PG_HOST: postgres
+      MONGO_HOST: mongo
+      REDIS_HOST: redis
+    depends_on:
+      postgres: { condition: service_healthy }
+      mongo:    { condition: service_healthy }
+    restart: unless-stopped  # si falla, Docker lo vuelve a levantar
+    networks: [red_interna]
+
+  web:
+    build: ./web
+    ports:
+      - "8080:80"            # interfaz: http://localhost:8080
+    depends_on: [api]
+    networks: [red_interna]
+
+volumes:
+  pg_data:
+  mongo_data:
+
+networks:
+  red_interna:
